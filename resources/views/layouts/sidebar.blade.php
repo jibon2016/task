@@ -3,7 +3,7 @@
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
             <a href="{{ route('dashboard') }}" class="navbar-brand">
-                <h3 class="mb-0 text-2xl font-bold">Soft <span style="color: #f1c152;"> Vance</span> </h3>
+                <h3 class="mb-0 text-2xl font-bold"> <span style="color: #f1c152;">SoftVance</span> </h3>
             </a>
 {{--            <a href="{{ route('dashboard') }}" class="logo">--}}
 {{--                <img--}}

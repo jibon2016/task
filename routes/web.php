@@ -28,3 +28,16 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('migrate-fresh', function () {
+    \Artisan::call('migrate:fresh', ['--seed' => true]);
+    return 'Database migrated fresh and seeded.';
+});
+
+Route::get('clear-cache', function () {
+    \Artisan::call('cache:clear');
+    \Artisan::call('config:clear');
+    \Artisan::call('config:cache');
+    \Artisan::call('view:clear');
+    return 'Application cache cleared.';
+});
