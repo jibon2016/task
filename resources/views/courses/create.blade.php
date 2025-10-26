@@ -1,5 +1,5 @@
-@extends('backend.layouts.app')
-@section('title', 'Create Mosque')
+@extends('layouts.app')
+@section('title', 'Create Courses')
 @push('style')
     <style>
         .upload-container {
@@ -66,7 +66,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h3 class="fw-bold mb-3">Create Mosque</h3>
+                <h3 class="fw-bold mb-3">Create Courses</h3>
                 <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
                         <a href="#">
@@ -77,13 +77,13 @@
                         <i class="icon-arrow-right"></i>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('mosque.index') }}">Mosques</a>
+                        <a href="{{ route('courses.index') }}">Courses</a>
                     </li>
                     <li class="separator">
                         <i class="icon-arrow-right"></i>
                     </li>
                     <li class="nav-item">
-                        <a href="#">Create Mosques</a>
+                        <a href="#">Create Courses</a>
                     </li>
                 </ul>
             </div>
@@ -91,71 +91,49 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">মসজিদের তথ্য </div>
+                            <div class="card-title">Courses Details</div>
                         </div>
 
-                        <form method="POST" action="{{ route('mosque.store') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('courses.store') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
                                 <div class="row px-3">
-                                    <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }} row">
-                                        <label for="name" class="col-sm-2 col-form-label">মসজিদের নাম <span class="text-danger">*</span></label>
+                                    <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }} row">
+                                        <label for="title" class="col-sm-2 col-form-label">Course Title  <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" value="{{ old('name') }}" name="name" class="form-control" id="name" placeholder="মসজিদের নাম লিখুন ">
-                                            <span id="name-error" class="help-block text-danger">{{ $errors->first('name') }}</span>
+                                            <input type="text" value="{{ old('title') }}" name="title" class="form-control" id="title" placeholder="Enter Course Title">
+                                            <span id="title-error" class="help-block text-danger">{{ $errors->first('title') }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="form-group {{ $errors->has('address') ? 'has-error' : '' }} row">
-                                        <label for="address" class="col-sm-2 col-form-label">মসজিদের ঠিকানা  <span class="text-danger">*</span></label>
+                                    <div class="form-group {{ $errors->has('level') ? 'has-error' : '' }} row">
+                                        <label for="level" class="col-sm-2 col-form-label">Level  <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" value="{{ old('address') }}" name="address" class="form-control" id="address" placeholder="মসজিদের ঠিকানা লিখুন ">
-                                            <span id="address-error" class="help-block text-danger">{{ $errors->first('address') }}</span>
+                                            <input type="text" value="{{ old('level') }}" name="level" class="form-control" id="level" placeholder="Enter Level">
+                                            <span id="level-error" class="help-block text-danger">{{ $errors->first('level') }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="form-group {{ $errors->has('google_map_url') ? 'has-error' : '' }} row">
-                                        <label for="google_map_url" class="col-sm-2 col-form-label">গুগল ম্যাপ লিংক <span class="text-danger">*</span></label>
+                                    <div class="form-group {{ $errors->has('price') ? 'has-error' : '' }} row">
+                                        <label for="price" class="col-sm-2 col-form-label">Course Price <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" value="{{ old('google_map_url') }}" name="google_map_url" class="form-control" id="google_map_url" placeholder="গুগল মাপের শেয়ার লিংক পেস্ট করুন ">
-                                            <span id="google_map_url-error" class="help-block text-danger">{{ $errors->first('google_map_url') }}</span>
+                                            <input type="number" value="{{ old('price') }}" name="price" class="form-control" id="price" placeholder="Enter Course Price">
+                                            <span id="price-error" class="help-block text-danger">{{ $errors->first('price') }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="form-group {{ $errors->has('establist_year') ? 'has-error' : '' }} row">
-                                        <label for="establist_year" class="col-sm-2 col-form-label">প্রতিষ্ঠার তারিখ <span class="text-danger">*</span></label>
+                                    <div class="form-group {{ $errors->has('description') ? 'has-error' : '' }} row">
+                                        <label for="description" class="col-sm-2 col-form-label">Course Description <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="date" value="{{ old('establist_year') }}" name="establist_year" class="form-control" id="establist_year" placeholder="প্রতিষ্ঠার তারিখ লিখুন">
-                                            <span id="establist_year-error" class="help-block text-danger">{{ $errors->first('establist_year') }}</span>
+                                            <textarea type="date" value="{{ old('description') }}" name="description" class="form-control" id="description" ></textarea>
+                                            <span id="description-error" class="help-block text-danger">{{ $errors->first('description') }}</span>
                                         </div>
                                     </div>
-
-                                    <div class="form-group {{ $errors->has('total_commitee_members') ? 'has-error' : '' }} row">
-                                        <label for="total_commitee_members" class="col-sm-2 col-form-label">মোট কমিটির সদস্য <span class="text-danger">*</span></label>
-                                        <div class="col-sm-10">
-                                            <input type="number" value="{{ old('total_commitee_members') }}" name="total_commitee_members" class="form-control" id="total_commitee_members" placeholder="মোট কমিটির সদস্য লিখুন">
-                                            <span id="total_commitee_members-error" class="help-block text-danger">{{ $errors->first('total_commitee_members') }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label class="col-sm-2 col-form-label">মসজিদের ছবি </label>
-                                        <div class="col-sm-10">
-                                            <div class="upload-container">
-                                                <span class="flow-text" onclick="triggerFileInput()">সংযুক্তি ফাইলগুলি এখানে ক্লিক করুন অথবা টেনে আনুন এবং ছেড়ে দিন</span>
-                                                <input accept=".jpg, .jpeg, .png" type="file" class="file-upload" name="attachments[]" onchange="displayFilePreviews(this)">
-                                            </div>
-
-                                            <div id="file-previews" class="file-preview row"></div>
-                                            <span id="attachments-error" class="text-danger error-message"></span>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                             <div class="card-action">
                                 <button type="submit" class="btn btn-success">Submit</button>
-                                <a href="{{ route('mosque.index') }}" class="btn btn-danger">Cancel</a>
+                                <a href="{{ route('courses.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>
@@ -166,75 +144,6 @@
 @endsection
 @push('script')
     <script>
-        function triggerFileInput() {
-            const fileInput = document.querySelector('.file-upload');
-            fileInput.click();
-        }
 
-        function addFileInput() {
-            const newInput = document.createElement('input');
-            newInput.type = 'file';
-            newInput.classList.add('file-upload');
-            newInput.multiple = false;
-            newInput.onchange = function () {
-                displayFilePreviews(newInput);
-            };
-
-            const filePreviews = document.getElementById('file-previews');
-            filePreviews.appendChild(newInput);
-        }
-
-        function displayFilePreviews(input) {
-            const fileInput = input;
-            const filePreviews = document.getElementById('file-previews');
-            const previewItem = document.createElement('div');
-            previewItem.classList.add('file-preview');
-
-            Array.from(fileInput.files).forEach(file => {
-                const wrapperListItem = document.createElement('div');
-                wrapperListItem.classList.add('wrapper-list-item');
-                previewItem.appendChild(wrapperListItem);
-                const sortInput = document.createElement('input');
-                sortInput.type = 'number';
-                sortInput.name = 'attachment_sort[]';
-                sortInput.placeholder = 'Sort';
-                sortInput.classList.add('file-title-input');
-
-                wrapperListItem.appendChild(sortInput);
-
-                if (file.type.startsWith('image/')) {
-                    // Image preview
-                    const previewImage = document.createElement('img');
-                    previewImage.classList.add('preview-image');
-                    previewImage.src = URL.createObjectURL(file);
-                    wrapperListItem.appendChild(previewImage);
-                } else if (file.type === 'application/pdf') {
-                    // PDF preview
-                    const previewPdf = document.createElement('div');
-                    previewPdf.classList.add('preview-pdf');
-                    previewPdf.textContent = 'PDF';
-                    wrapperListItem.appendChild(previewPdf);
-                } else {
-                    // Other file types (e.g., documents)
-                    const previewPdf = document.createElement('div');
-                    previewPdf.classList.add('preview-pdf');
-                    previewPdf.textContent = file.name;
-                    wrapperListItem.appendChild(previewPdf);
-                }
-
-                // Add a remove button for each preview
-                const removeButton = document.createElement('div');
-                removeButton.classList.add('remove-button');
-                removeButton.textContent = 'Remove';
-                removeButton.onclick = function () {
-                    fileInput.value = ''; // Clear the input
-                    wrapperListItem.remove();
-                };
-
-                wrapperListItem.appendChild(removeButton);
-
-                filePreviews.appendChild(wrapperListItem);
-            });
-        }
     </script>
 @endpush

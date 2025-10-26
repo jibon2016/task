@@ -50,11 +50,10 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Addres</th>
-                                        <th>Establisted</th>
-                                        <th>Member</th>
-                                        <th>image</th>
+                                        <th>Title</th>
+                                        <th>Level</th>
+                                        <th>Price</th>
+                                        <th>Description</th>
                                         <th style="width: 10%">Action</th>
                                     </tr>
                                     </thead>
@@ -83,23 +82,10 @@
                 // columnDefs: [{ width: '40%', targets: 3 }],
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'address', name: 'address'},
-                    {data: 'establist_year', name: 'establist_year'},
-                    {data: 'total_commitee_members', name: 'total_commitee_members'},
-                    // {
-                    //     data: 'status',
-                    //     name: 'status',
-                    //     render: function (data, type, row) {
-                    //         if (data === 1) {
-                    //             return '<span class="badge badge-success">Active</span>';
-                    //         } else if (data === 0) {
-                    //             return '<span class="badge badge-danger">Inactive</span>';
-                    //         }
-                    //         return data;
-                    //     }
-                    // },
-                    {data: 'image', name: 'image'},
+                    {data: 'title', name: 'title'},
+                    {data: 'level', name: 'level'},
+                    {data: 'price', name: 'price'},
+                    {data: 'description', name: 'description'},
                     {data: 'action', name: 'action', orderable: false},
                 ],
                 "dom": 'lBfrtip',

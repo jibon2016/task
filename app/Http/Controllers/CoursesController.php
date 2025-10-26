@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -23,19 +24,11 @@ class CoursesController extends Controller
         $query = Course::query();
         return DataTables::eloquent($query)
             ->addIndexColumn()
-            ->addColumn('action', function(Mosque $mosque) {
-                return '<a role="button" href="'. route('mosque.show',['mosque' => $mosque->id]).'" class="btn btn-secondary btn-sm btn-show"><i class="fa fa-eye"></i></a>
-                        <a href="'.route('mosque.edit',['mosque' => $mosque->id]).'" class="btn btn-primary bg-gradient-primary btn-sm btn-edit"><i class="fa fa-edit"></i></a>
-                        <a role="button" data-id="'.$mosque->id.'" class="btn btn-danger btn-sm btn-delete"><i class="fa fa-trash"></i></a>';
-
+            ->addColumn('action', function(Course $course) {
+                return '<a href="'.route('courses.edit',['course' => $course->id]).'" class="btn btn-primary bg-gradient-primary btn-sm btn-edit"><i class="fa fa-edit"></i></a>
+                        <a role="button" data-id="'.$course->id.'" class="btn btn-danger btn-sm btn-delete"><i class="fa fa-trash"></i></a>';
             })
-//            ->addColumn('activity_category_name', function(Mosque $activity) {
-//                return $activity->activityCategory->name ?? '';
-//            })
-            ->addColumn('image', function(Mosque $mosque) {
-                return '<img height="100px" src="'.asset($mosque->attachments->first()->file ?? '').'">';
-            })
-            ->rawColumns(['action','image'])
+            ->rawColumns(['action'])
             ->toJson();
     }
 
@@ -44,7 +37,7 @@ class CoursesController extends Controller
      */
     public function create()
     {
-        //
+        return view('courses.create');
     }
 
     /**
