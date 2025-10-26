@@ -8,7 +8,7 @@
         name="viewport"
     />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ asset('backend/assets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/x-icon" />
 
     <!-- Fonts and icons -->
     <script src="{{ asset('backend/assets/js/plugin/webfont/webfont.min.js') }}"></script>
