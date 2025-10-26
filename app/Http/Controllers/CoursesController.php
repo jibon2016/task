@@ -73,9 +73,8 @@ class CoursesController extends Controller
 
             foreach ($request->input('modules', []) as $moduleIndex => $moduleData) {
                 $moduleTitle = $moduleData['title'] ?? null;
-                $moduleDesc = $moduleData['desc'] ?? null;
+                $moduleDesc = $moduleData['description'] ?? null;
 
-                // create module (example)
                 $module = $course->modules()->create([
                     'title' => $moduleTitle,
                     'description' => $moduleDesc,
@@ -83,9 +82,8 @@ class CoursesController extends Controller
 
                 foreach ($moduleData['contents'] ?? [] as $contentIndex => $content) {
                     $contentTitle = $content['title'] ?? null;
-                    $contentDesc = $content['desc'] ?? null;
+                    $contentDesc = $content['description'] ?? null;
 
-                    // create content linked to module
                     $course->contents()->create([
                         'course_id' => $course->id,
                         'module_id' => $module->id,
@@ -119,7 +117,108 @@ class CoursesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'level' => 'integer',
+            'price' => 'numeric',
+            'description' => 'nullable|string',
+            'modules' => 'nullable|array',
+            'modules.*.id' => 'nullable|integer|exists:modules,id',
+            'modules.*.title' => 'required_with:modules|string',
+            'modules.*.description' => 'nullable|string',
+            'modules.*.contents' => 'nullable|array',
+            'modules.*.contents.*.id' => 'nullable|integer|exists:contents,id',
+            'modules.*.contents.*.title' => 'required_with:modules.*.contents|string',
+            'modules.*.contents.*.description' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $course = Course::with('modules.contents')->findOrFail($id);
+
+            $course->update([
+                'title' => $validated['title'],
+                'level' => $validated['level'] ?? null,
+                'price' => $validated['price'] ?? null,
+                'description' => $validated['description'] ?? null,
+            ]);
+
+            $keepModuleIds = [];
+
+            foreach ($request->input('modules', []) as $moduleData) {
+
+                if (!empty($moduleData['id'])) {
+                    $module = $course->modules()->find($moduleData['id']);
+                    if ($module) {
+                        $module->update([
+                            'title' => $moduleData['title'] ?? null,
+                            'description' => $moduleData['description'] ?? null,
+                        ]);
+                    } else {
+                        $module = $course->modules()->create([
+                            'title' => $moduleData['title'] ?? null,
+                            'description' => $moduleData['description'] ?? null,
+                        ]);
+                    }
+                } else {
+                    $module = $course->modules()->create([
+                        'title' => $moduleData['title'] ?? null,
+                        'description' => $moduleData['description'] ?? null,
+                    ]);
+                }
+
+                $keepModuleIds[] = $module->id;
+
+                $keepContentIds = [];
+                foreach ($moduleData['contents'] ?? [] as $contentData) {
+                    if (!empty($contentData['id'])) {
+                        $content = $module->contents()->find($contentData['id']);
+                        if ($content) {
+                            $content->update([
+                                'title' => $contentData['title'] ?? null,
+                                'description' => $contentData['description'] ?? null,
+                            ]);
+                        } else {
+                            $content = $course->contents()->create([
+                                'course_id' => $course->id,
+                                'module_id' => $module->id,
+                                'title' => $contentData['title'] ?? null,
+                                'description' => $contentData['description'] ?? null,
+                            ]);
+                        }
+                    } else {
+                        $content = $course->contents()->create([
+                            'course_id' => $course->id,
+                            'module_id' => $module->id,
+                            'title' => $contentData['title'] ?? null,
+                            'description' => $contentData['description'] ?? null,
+                        ]);
+                    }
+
+                    $keepContentIds[] = $content->id;
+                }
+
+                if (!empty($keepContentIds)) {
+                    $module->contents()->whereNotIn('id', $keepContentIds)->delete();
+                } else {
+                    $module->contents()->delete();
+                }
+            }
+
+            if (!empty($keepModuleIds)) {
+                $course->modules()->whereNotIn('id', $keepModuleIds)->delete();
+            } else {
+                $course->modules()->delete();
+            }
+            DB::commit();
+
+            return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error('Error updating course: ' . $exception->getMessage());
+            return redirect()->back()->withInput()->withErrors(['error' => 'An error occurred while updating the course: ' . $exception->getMessage()]);
+        }
     }
 
     /**
@@ -127,6 +226,15 @@ class CoursesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $course = Course::findOrFail($id);
+            $course->contents()->delete();
+            $course->modules()->delete();
+            $course->delete();
+            return response()->json(['success' => true, 'message' => 'Course deleted successfully.']);
+        } catch (\Exception $exception) {
+            Log::error('Error deleting course: ' . $exception->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred while deleting the course: ' . $exception->getMessage()], 500);
+        }
     }
 }

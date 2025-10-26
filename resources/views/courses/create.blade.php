@@ -104,7 +104,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Module Desc</label>
                                 <div class="col-sm-10">
-                                    <textarea name="modules[__MID__][desc]" class="form-control module-desc"></textarea>
+                                    <textarea name="modules[__MID__][description]" class="form-control module-desc"></textarea>
                                 </div>
                             </div>
 
@@ -138,7 +138,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Content Desc</label>
                             <div class="col-sm-10">
-                                <textarea name="modules[__MID__][contents][__CID__][desc]" class="form-control content-desc"></textarea>
+                                <textarea name="modules[__MID__][contents][__CID__][description]" class="form-control content-desc"></textarea>
                             </div>
                         </div>
                     </div>

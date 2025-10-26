@@ -32,14 +32,15 @@
                             <div class="card-title">Course Details</div>
                         </div>
 
-                        <form method="POST" action="{{ route('courses.update') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('courses.update', ['course' => $course->id]) }}" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             <div class="card-body">
                                 <div class="row px-3">
                                     <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }} row">
                                         <label for="title" class="col-sm-2 col-form-label">Course Title  <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="text" value="{{ old('title') }}" name="title" class="form-control" id="title" placeholder="Enter Course Title">
+                                            <input type="text" value="{{ old('title', $course->title) }}" name="title" class="form-control" id="title" placeholder="Enter Course Title">
                                             <span id="title-error" class="help-block text-danger">{{ $errors->first('title') }}</span>
                                         </div>
                                     </div>
@@ -47,7 +48,7 @@
                                     <div class="form-group {{ $errors->has('level') ? 'has-error' : '' }} row">
                                         <label for="level" class="col-sm-2 col-form-label">Level  <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="number" value="{{ old('level') }}" name="level" class="form-control" id="level" placeholder="Enter Level">
+                                            <input type="number" value="{{ old('level', $course->level) }}" name="level" class="form-control" id="level" placeholder="Enter Level">
                                             <span id="level-error" class="help-block text-danger">{{ $errors->first('level') }}</span>
                                         </div>
                                     </div>
@@ -55,7 +56,7 @@
                                     <div class="form-group {{ $errors->has('price') ? 'has-error' : '' }} row">
                                         <label for="price" class="col-sm-2 col-form-label">Course Price <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <input type="number" value="{{ old('price') }}" name="price" class="form-control" id="price" placeholder="Enter Course Price">
+                                            <input type="number" value="{{ old('price',$course->price) }}" name="price" class="form-control" id="price" placeholder="Enter Course Price">
                                             <span id="price-error" class="help-block text-danger">{{ $errors->first('price') }}</span>
                                         </div>
                                     </div>
@@ -63,7 +64,7 @@
                                     <div class="form-group {{ $errors->has('description') ? 'has-error' : '' }} row">
                                         <label for="description" class="col-sm-2 col-form-label">Course Description <span class="text-danger">*</span></label>
                                         <div class="col-sm-10">
-                                            <textarea type="date" value="{{ old('description') }}" name="description" class="form-control" id="description" ></textarea>
+                                            <textarea type="date" name="description" class="form-control" id="description" >{{ old('description', $course->description) }}</textarea>
                                             <span id="description-error" class="help-block text-danger">{{ $errors->first('description') }}</span>
                                         </div>
                                     </div>
@@ -71,13 +72,77 @@
                                     <div class="col-sm-12">
                                         <button type="button" style="margin-top: 31px;" id="add_new_module_btn" class="btn btn-info bg-gradient-info btn-md btn-block"><i class="fa fa-plus"></i>Add Module</button>
                                     </div>
-                                    <div class="py-2" id="module-container">
+                                    @php
+                                        $oldModules = old('modules');
+                                        $modules = $oldModules ?? ($course->modules->toArray() ?? []);
+                                    @endphp
 
+                                    <div class="py-2" id="module-container">
+                                        @foreach($modules as $mIndex => $m)
+                                            <div class="accordion py-2 module-accordion" data-module-index="{{ $mIndex }}">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header">
+                                                        <button class="accordion-button" type="button">
+                                                            Module <span class="module-count mx-2">{{ $mIndex + 1 }}</span>
+                                                            <span type="button" class="mx-2 btn btn-danger btn-sm btn-remove">Remove</span>
+                                                        </button>
+                                                    </h2>
+                                                    <div class="accordion-body">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Module Title <span class="text-danger">*</span></label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" name="modules[{{ $mIndex }}][title]" class="form-control module-title" placeholder="Enter Module Title" value="{{ $m['title'] ?? '' }}">
+                                                                <span class="help-block text-danger">{!! $errors->first("modules.$mIndex.title") !!}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Module Desc</label>
+                                                            <div class="col-sm-10">
+                                                                <textarea name="modules[{{ $mIndex }}][description]" class="form-control module-desc">{{ $m['description'] ?? '' }}</textarea>
+                                                                <span class="help-block text-danger">{!! $errors->first("modules.$mIndex.description") !!}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="content-container">
+                                                            <button type="button" class="btn btn-primary btn-sm add-content-btn">Add Content</button>
+                                                            <div class="content-accordion mt-3" data-content-count="{{ count($m['contents'] ?? []) }}">
+                                                                @foreach($m['contents'] ?? [] as $cIndex => $c)
+                                                                    <div class="accordion-item" data-content-index="{{ $cIndex }}">
+                                                                        <h2 class="accordion-header">
+                                                                            <button class="accordion-button" type="button">
+                                                                                Content <span class="content-count mx-1">{{ $cIndex + 1 }}</span>
+                                                                                <span type="button" class="mx-2 btn btn-danger btn-sm btn-remove-content">Remove</span>
+                                                                            </button>
+                                                                        </h2>
+                                                                        <div class="accordion-body">
+                                                                            <div class="form-group row">
+                                                                                <label class="col-sm-2 col-form-label">Content Title <span class="text-danger">*</span></label>
+                                                                                <div class="col-sm-10">
+                                                                                    <input type="text" name="modules[{{ $mIndex }}][contents][{{ $cIndex }}][title]" class="form-control content-title" placeholder="Enter Content Title" value="{{ $c['title'] ?? '' }}">
+                                                                                    <span class="help-block text-danger">{!! $errors->first("modules.$mIndex.contents.$cIndex.title") !!}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group row">
+                                                                                <label class="col-sm-2 col-form-label">Content Desc</label>
+                                                                                <div class="col-sm-10">
+                                                                                    <textarea name="modules[{{ $mIndex }}][contents][{{ $cIndex }}][description]" class="form-control content-desc">{{ $c['description'] ?? '' }}</textarea>
+                                                                                    <span class="help-block text-danger">{!! $errors->first("modules.$mIndex.contents.$cIndex.description") !!}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
                             <div class="card-action">
-                                <button type="submit" class="btn btn-success">Submit</button>
+                                <button type="submit" class="btn btn-success">Update</button>
                                 <a href="{{ route('courses.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
@@ -104,7 +169,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Module Desc</label>
                                 <div class="col-sm-10">
-                                    <textarea name="modules[__MID__][desc]" class="form-control module-desc"></textarea>
+                                    <textarea name="modules[__MID__][description]" class="form-control module-description"></textarea>
                                 </div>
                             </div>
 
@@ -138,7 +203,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Content Desc</label>
                             <div class="col-sm-10">
-                                <textarea name="modules[__MID__][contents][__CID__][desc]" class="form-control content-desc"></textarea>
+                                <textarea name="modules[__MID__][contents][__CID__][description]" class="form-control content-description"></textarea>
                             </div>
                         </div>
                     </div>
@@ -150,29 +215,23 @@
 @push('script')
     <script>
         $(function () {
-            // initialize from any old input count if needed (server can emit count)
-            let moduleCounter = 0;
+            // initialize moduleCounter from server-side modules array length (old input or course)
+            let moduleCounter = parseInt(@json(count($modules)), 10) || 0;
 
             function reindex() {
-                // Reindex modules and their contents so names become contiguous: modules[0], modules[1], ...
                 $('#module-container').children('.module-accordion').each(function (mIndex) {
                     const $mod = $(this);
                     $mod.attr('data-module-index', mIndex);
                     $mod.find('.module-count').text(mIndex + 1);
 
-                    // update module-level input names
                     $mod.find('[name]').each(function () {
                         const $el = $(this);
-                        // update only our module/content fields that contain 'modules'
                         let name = $el.attr('name');
                         if (!name) return;
-                        // replace first modules\[\d+\] with modules[mIndex]
                         name = name.replace(/modules\[\d+\]/, 'modules[' + mIndex + ']');
-                        // also update content indices below if present -- leave them for content loop
                         $el.attr('name', name);
                     });
 
-                    // Reindex contents inside this module
                     $mod.find('.content-accordion').each(function () {
                         const $contentContainer = $(this);
                         $contentContainer.children('[data-content-index]').each(function (cIndex) {
@@ -184,14 +243,11 @@
                                 const $el = $(this);
                                 let name = $el.attr('name');
                                 if (!name) return;
-                                // ensure module index is correct
                                 name = name.replace(/modules\[\d+\]/, 'modules[' + mIndex + ']');
-                                // replace contents index
                                 name = name.replace(/contents\[\d+\]/, 'contents[' + cIndex + ']');
                                 $el.attr('name', name);
                             });
                         });
-                        // update data-content-count attribute
                         $contentContainer.attr('data-content-count', $contentContainer.children('[data-content-index]').length);
                     });
                 });
@@ -233,8 +289,6 @@
                 $(this).closest('[data-content-index]').remove();
                 reindex();
             });
-
-            // run once on page load if there are pre-rendered modules (optional)
             reindex();
         });
     </script>

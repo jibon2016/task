@@ -14,6 +14,8 @@ class Course extends Model
         'level',
         'price',
         'description',
+        'course_id',
+        'module_id',
     ];
 
     public function modules() : HasMany
